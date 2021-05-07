@@ -6,9 +6,9 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=7465777785
-      - POSTGRES_DB=Posts
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
     ports:
       - 5432:5432
 
@@ -21,6 +21,6 @@ services:
       - RUST_LOG=debug
       - ROCKET_ADDRESS=0.0.0.0
       - ROCKET_PORT=8000
-      - DATABASE_URL=postgres://postgres:7465777785@db/postgres
+      - DATABASE_URL=postgres://username:password@db/postgres
     ports:
       - "8000:8000"
