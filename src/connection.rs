@@ -8,36 +8,35 @@ use rocket::http::Status;
 use rocket::request::{self, FromRequest};
 use rocket::{Outcome, Request, State};
 
-type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
-
+type Pool = r2d2::Pool<ConnectionManager<diesel::PgConnection>>;
 
 pub fn init_pool() -> Pool {
     let manager = ConnectionManager::<PgConnection>::new(database_url());
-    Pool::new(manager).expect("db pool");
+    Pool::new(manager).expect("db pool")
 }
 
 fn database_url() -> String {
     env::var("DATABASE_URL").expect("DATABASE_URL must be set")
 }
 
-pub struct DBConn(pub r2d2::PooledConnection<ConnectionManager<PgConnection>>);
+pub struct DbConn(pub r2d2::PooledConnection<ConnectionManager<PgConnection>>);
 
-imp<a',r'> FromRequest for DBConn {
+impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
     type Error = ();
-    
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<DBConn, Self::Error> {
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<DbConn, Self::Error> {
         let pool = request.guard::<State<Pool>>()?;
         match pool.get() {
-            Ok(conn) => Outcome::Success(DBConn(conn)),
+            Ok(conn) => Outcome::Success(DbConn(conn)),
             Err(_) => Outcome::Failure((Status::ServiceUnavailable, ())),
         }
     }
 }
 
-impl Deref for DBConn {
+impl Deref for DbConn {
     type Target = PgConnection;
-    
+
     fn deref(&self) -> &Self::Target {
-        &self.
+        &self.0
     }
 }

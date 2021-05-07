@@ -1,7 +1,7 @@
 use rocket;
 
+use crate::api;
 use crate::connection;
-use crate::sample;
 
 pub fn create_routes() {
     rocket::ignite()
@@ -9,11 +9,11 @@ pub fn create_routes() {
         .mount(
             "/posts",
             routes![
-                sample::handler::all_posts,
-                sample::handler::create_post,
-                sample::handler::get_post,
-                sample::handler::update_post,
-                sample::handler::delete_post
+                api::handler::all_posts,
+                api::handler::create_post,
+                api::handler::get_post,
+                api::handler::update_post,
+                api::handler::delete_post
             ],
         )
         .launch();
